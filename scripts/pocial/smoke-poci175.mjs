@@ -31,6 +31,7 @@ const context = await browser.newContext({
   userAgent:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
 });
+await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
 const page = await context.newPage();
 
 try {
@@ -74,6 +75,8 @@ try {
   const fbText = await page.locator("body").innerText();
   const storyChromeOnFb = /add to your story/i.test(fbText);
 
+  await context.tracing.stop({ path: path.join(outDir, "trace.zip") });
+
   const result = {
     ticket: "POCI-175",
     elapsed_ms: Date.now() - t0,
@@ -84,14 +87,16 @@ try {
         ? "FB tab still shows IG-style 'Add to your story'."
         : "Compare ig.png vs fb.png for zoom/letterbox.",
     },
-    artifacts: ["ig.png", "fb.png"],
+    artifacts: ["ig.png", "fb.png", "trace.zip"],
   };
 
   fs.writeFileSync(path.join(outDir, "result.json"), JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result, null, 2));
   console.log(`Done in ${(result.elapsed_ms / 1000).toFixed(1)}s → ${outDir}`);
+  console.log(`Trace: npx playwright show-trace ${path.join(outDir, "trace.zip")}`);
 } catch (err) {
   await page.screenshot({ path: path.join(outDir, "error.png") }).catch(() => {});
+  await context.tracing.stop({ path: path.join(outDir, "trace.zip") }).catch(() => {});
   fs.writeFileSync(
     path.join(outDir, "result.json"),
     JSON.stringify(
@@ -101,6 +106,7 @@ try {
         verdict: "ERROR",
         error: String(err?.message || err),
         url: page.url(),
+        artifacts: ["error.png", "trace.zip"],
       },
       null,
       2
