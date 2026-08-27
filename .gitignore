@@ -1,5 +1,6 @@
 auth/
 artifacts/
+.qa-agent-state.json
 node_modules/
 *.png
 .env
