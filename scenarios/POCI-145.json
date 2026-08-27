@@ -19,20 +19,53 @@
       "expected": "Both videos are accepted, item strip shows 'Item 1 of 2 / 2 Videos', preview plays, no error message.",
       "requires_execution": true,
       "risk_note": "Original bug: adding 2 videos failed with a recurring error. Re-Open history means this needs re-verification after each related fix."
+    },
+    {
+      "id": "POCI-145-N01",
+      "type": "negative/boundary",
+      "title": "Select 3 videos at once (beyond the ticket's 2-video case)",
+      "steps": [
+        "Same entry flow as P01.",
+        "Select 3 video files at once instead of 2."
+      ],
+      "expected": "Either all 3 are accepted cleanly, or the app shows a clear limit message (no silent failure/broken state).",
+      "requires_execution": true,
+      "risk_note": "Checks whether the fix is specifically hardcoded for '2' or handles N videos generally."
+    },
+    {
+      "id": "POCI-145-E01",
+      "type": "edge",
+      "title": "2-video upload on a mobile viewport",
+      "steps": [
+        "Same entry flow as P01, but with browser viewport/UA emulating iPhone 13.",
+        "Select 2 videos."
+      ],
+      "expected": "Same as P01 on mobile layout — ticket explicitly says 'Web + Mobile'.",
+      "requires_execution": true,
+      "risk_note": "Original bug report covered both Web and Mobile; desktop-only testing would miss a mobile-specific regression."
     }
   ],
-  "overall_confidence": "medium",
+  "overall_confidence": "high",
   "recommendation": "ready_for_execution",
   "execution": {
     "ran_at": "2026-08-27",
     "env": "https://stage.pocial.com",
-    "flow": "Home > Quick Create > Create From Media > Browse Device > select 2 videos",
+    "flow": "Home > Quick Create > Create From Media > Browse Device",
     "P01_result": "PASS",
+    "N01_result": "PASS",
+    "E01_result": "PASS",
     "findings": [
-      "Both videos accepted, item strip showed 'Item 1 of 2, 2 Videos', preview played, Trim Video option available.",
-      "No error/failed/unable text detected on the page.",
+      "P01: both videos accepted, item strip showed 'Item 1 of 2, 2 Videos', preview played, Trim Video option available, no error text.",
+      "N01: 3 videos also accepted cleanly, item strip showed 'Item 1 of 3, 3 Videos' — no hard cap at 2, no broken state.",
+      "E01: on iPhone 13 viewport emulation, 2-video upload behaved the same as desktop — 'Item 1 of 2', preview playable, no error. (Video letterboxing seen in the mobile player is normal video-aspect-ratio behavior, not the same defect as POCI-175's image-crop bug — noted for awareness, not flagged as a bug.)",
       "Consistent with prior manual UAT2 sign-off noted in ticket comments."
     ],
-    "screenshots": ["after-2-videos.png"]
+    "screenshots": ["after-2-videos.png", "N01-three-videos.png", "E01-mobile-two-videos.png"],
+    "not_covered": [
+      "Mixing images and videos in the same upload",
+      "Uploading an invalid/corrupt video file",
+      "Very large video file (upload timeout/size-limit behavior)",
+      "Native mobile app (only mobile *web* viewport was emulated, not a real device/app)"
+    ]
   }
 }
