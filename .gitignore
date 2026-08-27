@@ -1,6 +1,7 @@
 auth/
 artifacts/
 .qa-agent-state.json
+.figma-creds.local.json
 node_modules/
 *.png
 .env
