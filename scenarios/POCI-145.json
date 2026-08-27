@@ -1,0 +1,38 @@
+{
+  "ticket": "POCI-145",
+  "title": "Unable to add 2 videos from Quick Create - same error as before (Web + Mobile)",
+  "project": "Pocial",
+  "module": "Quick Create / media upload",
+  "env": "https://stage.pocial.com/pocial/features-dashboard",
+  "status": "Ready for prod deployment",
+  "scenarios": [
+    {
+      "id": "POCI-145-P01",
+      "type": "positive",
+      "title": "Select 2 videos together via Browse Device in Quick Create",
+      "steps": [
+        "Login to stage.pocial.com.",
+        "Open Features Dashboard > Quick Create > Create From Media.",
+        "Click Browse Device.",
+        "Select 2 video files at once in the OS file picker."
+      ],
+      "expected": "Both videos are accepted, item strip shows 'Item 1 of 2 / 2 Videos', preview plays, no error message.",
+      "requires_execution": true,
+      "risk_note": "Original bug: adding 2 videos failed with a recurring error. Re-Open history means this needs re-verification after each related fix."
+    }
+  ],
+  "overall_confidence": "medium",
+  "recommendation": "ready_for_execution",
+  "execution": {
+    "ran_at": "2026-08-27",
+    "env": "https://stage.pocial.com",
+    "flow": "Home > Quick Create > Create From Media > Browse Device > select 2 videos",
+    "P01_result": "PASS",
+    "findings": [
+      "Both videos accepted, item strip showed 'Item 1 of 2, 2 Videos', preview played, Trim Video option available.",
+      "No error/failed/unable text detected on the page.",
+      "Consistent with prior manual UAT2 sign-off noted in ticket comments."
+    ],
+    "screenshots": ["after-2-videos.png"]
+  }
+}
