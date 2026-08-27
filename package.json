@@ -1,0 +1,1 @@
+{"name":"qa-agent","private":true,"type":"module","scripts":{"auth:pocial":"node scripts/pocial/save-auth.mjs","smoke:poci175":"node scripts/pocial/smoke-poci175.mjs"},"version":"1.0.0","description":"","main":"index.js","keywords":[],"author":"","license":"ISC","devDependencies":{"playwright":"^1.62.1"}}

@@ -1,0 +1,8 @@
+auth/
+artifacts/
+node_modules/
+*.png
+.env
+.env.*
+poci175-landscape.jpg
+C:/Users/Sahil-ATR937/poci175-landscape.jpg

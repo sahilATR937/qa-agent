@@ -1,0 +1,82 @@
+{
+  "ticket": "POCI-175",
+  "title": "Post Preview Zoom: Images appear zoomed out; IG/FB previews identical",
+  "project": "Pocial",
+  "module": "Post Form / social preview",
+  "env": "https://stage.pocial.com/pocial/features-dashboard",
+  "status": "Re-Open",
+  "gaps_in_requirements": [
+    "No Figma/spec defining correct IG vs FB frame aspect ratio, crop, or zoom (cover vs contain).",
+    "Unclear if 'identical previews' means same crop, same chrome (header/footer), or both.",
+    "No acceptance for LinkedIn/TikTok previews or multi-image carousel.",
+    "No baseline image size/orientation for repro (portrait vs landscape)."
+  ],
+  "scenarios": [
+    {
+      "id": "POCI-175-P01",
+      "type": "positive",
+      "title": "IG and FB previews show distinct platform chrome and correct crop",
+      "steps": [
+        "Login to stage.pocial.com.",
+        "Open Post Form / Quick Create and upload one landscape image (e.g. 1920x1080).",
+        "Open social preview for Instagram.",
+        "Switch preview to Facebook without re-uploading.",
+        "Compare frame, crop/zoom, and platform chrome (header/footer/icons)."
+      ],
+      "expected": "Image not overly zoomed-out (letterboxing/empty margins beyond platform-safe area). IG and FB previews are visually distinct per platform norms, not the same frame.",
+      "requires_execution": true,
+      "risk_note": "Core reopen bug: wrong object-fit/aspect makes all platforms look like one generic preview."
+    },
+    {
+      "id": "POCI-175-N01",
+      "type": "negative",
+      "title": "Portrait image still uses platform aspect, not shared contain",
+      "steps": [
+        "Upload a tall portrait image (e.g. 1080x1920).",
+        "View IG preview then FB preview."
+      ],
+      "expected": "Each platform applies its own aspect/crop. Neither shows extreme zoom-out with large empty bars as the default 'fit'.",
+      "requires_execution": true,
+      "risk_note": "Portrait is where contain-vs-cover bugs show most; landscape alone can hide the defect."
+    },
+    {
+      "id": "POCI-175-E01",
+      "type": "edge",
+      "title": "Toggle platforms rapidly does not reset zoom or sync IG=FB crop",
+      "steps": [
+        "Upload image; open preview.",
+        "Toggle Instagram on/off and Facebook on/off 3 times.",
+        "Re-open IG then FB preview."
+      ],
+      "expected": "Crop/zoom stays correct; IG and FB remain distinct after toggles (related to POCI-167 image-disappear on IG off).",
+      "requires_execution": true,
+      "risk_note": "Re-Open often means toggle/state bugs returned with the zoom fix."
+    },
+    {
+      "id": "POCI-175-E02",
+      "type": "edge",
+      "title": "Multi-image post: each slide preview zoom and platform chrome",
+      "steps": [
+        "Upload 3 images (mix landscape + portrait).",
+        "In preview, move through slides for IG and FB."
+      ],
+      "expected": "Every slide uses correct zoom; IG vs FB still distinct; no missing slide (POCI-178).",
+      "requires_execution": true,
+      "risk_note": "Carousel path often reuses a single shared CSS zoom for all platforms."
+    }
+  ],
+  "overall_confidence": "high",
+  "recommendation": "ready_for_execution",
+  "execution": {
+    "ran_at": "2026-08-26",
+    "env": "https://stage.pocial.com",
+    "flow": "Social Post Manually > upload landscape > Where will this post preview",
+    "P01_result": "FAIL",
+    "findings": [
+      "Landscape image letterboxed in tall phone frame (zoomed out / contain) on both IG and FB.",
+      "FB tab still shows IG-style chrome including 'Add to your story' — IG and FB previews look identical aside from active icon color.",
+      "Re-Open status justified; fix not verified on stage."
+    ],
+    "screenshots": ["poci175-ig-preview.png", "poci175-fb-preview.png"]
+  }
+}
